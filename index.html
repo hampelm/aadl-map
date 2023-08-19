@@ -33,7 +33,7 @@
       
       var me = L.circleMarker([0,0], {
         color: 'red',
-        radius: 6,
+        radius: 10,
         fillOpacity: 1
       }).addTo(map)
       
@@ -69,7 +69,7 @@
             
             const marker = L.circleMarker([homecode.lat, homecode.lon], {
               color: color(homecode.code_id),
-              radius: 10,
+              radius: 20,
               fillOpacity: 0.5
             })
             marker.addTo(map);
