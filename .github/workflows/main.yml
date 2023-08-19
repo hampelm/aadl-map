@@ -3,13 +3,14 @@ name: Run Kubra CLI and Commit JSON Output
 on:
   schedule:
     - cron: '0 */4 * * *'
-  workflow_dispatch:
 
 jobs:
-  get_map:
+  get-map:
     runs-on: ubuntu-latest
+    
     permissions:
       contents: write
+      
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
