@@ -3,7 +3,10 @@ name: Copy the AADL Map
 on:
   schedule:
     - cron: '0 */4 * * *'
-
+  # For debug
+  push:
+    branches:
+      - main
 jobs:
   download-and-save:
     runs-on: ubuntu-latest
