@@ -1,0 +1,32 @@
+name: Copy the AADL Map
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+
+jobs:
+  download-and-save:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Download file
+        run: |
+          curl -L -o map.json "https://aadl.org/summergame/map/data/SummerGame2023"
+
+      - name: Commit and push if changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          if git diff --exit-code --quiet
+          then
+            echo "No changes to commit"
+          else
+            git commit -m "Upadte map"
+            git push
