@@ -26,11 +26,11 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add -A
-          if git diff --exit-code --quiet
+          git add -A .
+          if git diff --cached --quiet
           then
-            echo "No changes to commit"
-          else
-            git commit -m "Upadte map"
+            git commit -m "Add downloaded file"
             git push
+          else
+            echo "No changes to commit"
           fi
