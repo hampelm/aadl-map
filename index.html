@@ -1,6 +1,7 @@
 <html>
-  
   <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/protomaps-leaflet@1.24.0/dist/protomaps-leaflet.min.js"></script>
@@ -30,10 +31,17 @@
       var layer = protomapsL.leafletLayer({url:'https://api.protomaps.com/tiles/v2/{z}/{x}/{y}.pbf?key=a2199d137a3d2d06'});
       layer.addTo(map);
       
+      var me = L.circleMarker([0,0], {
+        color: 'red',
+        radius: 6,
+        fillOpacity: 1
+      }).addTo(map)
+      
       map.on('locationfound', function(ev){
-        map.panTo(ev.latlng);
+        // Move the me marker to the location found
+        me.setLatLng(ev.latlng);
       })
-      map.locate({setView: true, watch: true });
+      map.locate({ watch: true, maxZoom: 17 }); 
       
       homecodeMarkers = {};
       
@@ -55,6 +63,10 @@
         .then(data => {
           console.log(data);
           data.homecodes.forEach(homecode => {
+            if (homecode.display != 1) {
+              return;
+            }
+            
             const marker = L.circleMarker([homecode.lat, homecode.lon], {
               color: color(homecode.code_id),
               radius: 10,
