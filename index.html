@@ -1,17 +1,81 @@
 <html>
   
   <head>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" integrity="sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/protomaps-leaflet@1.24.0/dist/protomaps-leaflet.min.js"></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-size: 1rem;
+      }
+      body,
+      #map {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
   </head>
   
   <body>
+    <div id="map"></div>
+    
     <script>
+      const map = L.map('map');
+      // lat long of ann arbor, mi
+      map.setView(new L.LatLng(42.2808,-83.7430),14)
+
+      var layer = protomapsL.leafletLayer({url:'https://api.protomaps.com/tiles/v2/{z}/{x}/{y}.pbf?key=a2199d137a3d2d06'});
+      layer.addTo(map);
       
+      map.on('locationfound', function(ev){
+        map.panTo(ev.latlng);
+      })
+      map.locate({setView: true, watch: true });
+      
+      homecodeMarkers = {};
+      
+      var usedHomecodes = localStorage.getItem('homecodes');
+      if (!usedHomecodes) {
+        usedHomecodes = {} 
+      } else {
+        usedHomecodes = JSON.parse(usedHomecodes);
+      }
+      
+      function color(code_id) {
+        return usedHomecodes[code_id] ? 'gray' : 'blue';
+      }
+      
+
       // https://aadl.org/summergame/map/data/SummerGame2023
-      fetch('https://aadl.org/summergame/map/data/SummerGame2023')
+      fetch('./map.json')
         .then(response => response.json())
         .then(data => {
           console.log(data);
+          data.homecodes.forEach(homecode => {
+            const marker = L.circleMarker([homecode.lat, homecode.lon], {
+              color: color(homecode.code_id),
+              radius: 10,
+              fillOpacity: 0.5
+            })
+            marker.addTo(map);
+            marker.bindPopup(`<h3>${homecode.homecode}</h3>`);
+            
+            // Save to localstorage
+            marker.on('click', function(ev) {
+              console.log("Clicked", homecode, ev.target);
+              usedHomecodes[homecode.code_id] = !usedHomecodes[homecode.code_id];
+              localStorage.setItem('homecodes', JSON.stringify(usedHomecodes));
+              ev.target.setStyle({
+                color: color(homecode.code_id),
+              });
+            });
+            
+            homecodeMarkers[homecode.code_id] = marker;
+            
+          });
         });
     </script>
   </body>
