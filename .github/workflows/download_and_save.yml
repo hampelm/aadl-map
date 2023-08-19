@@ -33,3 +33,4 @@ jobs:
           else
             git commit -m "Upadte map"
             git push
+          fi
