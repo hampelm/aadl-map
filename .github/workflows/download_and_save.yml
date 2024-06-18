@@ -20,7 +20,7 @@ jobs:
 
       - name: Download file
         run: |
-          curl -L -o map.json "https://aadl.org/summergame/map/data/SummerGame2023"
+          curl -L -o map.json "https://aadl.org/summergame/map/data/SummerGame2024"
 
       - name: Commit and push if changes
         run: |
